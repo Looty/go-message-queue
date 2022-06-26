@@ -1,0 +1,19 @@
+{{ template  "header.html" }}
+
+<body class="container">
+	<div class="card">
+		<div class="card-header">Messenger</div>
+		<div class="card-body">
+		  <h5 class="card-title">Send a message to the broker</h5>
+		  <form action="/post" method="POST">
+			<label for="messageInputText" class="form-label">Message text</label>
+			<input type="text" name="messageText" class="form-control" id="messageInputText" placeholder="Example input placeholder">
+			<label for="messageInputRange" class="form-label">Quantity</label>
+		  	<input type="range" class="form-range" name="messageQuantity" id="messageInputRange" min="0" max={{ .maxInput }}>
+			<button type="submit" class="btn btn-success">Send!</button>
+		  </form>
+		</div>
+	</div>
+</body>
+{{ template  "footer.html" }}
+

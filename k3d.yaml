@@ -1,0 +1,7 @@
+apiVersion: k3d.io/v1alpha4
+kind: Simple
+metadata:
+  name: Cluster
+image: rancher/k3s:v1.20.4-k3s1
+servers: 1
+agents: 2
