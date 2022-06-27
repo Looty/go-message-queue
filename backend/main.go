@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -56,6 +57,7 @@ func main() {
 	rmqPass := viperEnvVariable("RMQPASS")
 	rmqAddr := viperEnvVariable("RMQADDR")
 	rmqPort := viperEnvVariable("RMQPORT")
+	rmqQueueName := viperEnvVariable("RMQ_QUEUE_NAME")
 
 	rmqConnectionString := fmt.Sprintf("amqp://%s:%s@%s:%s/", rmqUser, rmqPass, rmqAddr, rmqPort)
 	log.Printf("[INFO] Searcing for RMQ server %s...", rmqConnectionString)
@@ -68,12 +70,12 @@ func main() {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
+		rmqQueueName, // name
+		false,        // durable
+		false,        // delete when unused
+		false,        // exclusive
+		false,        // no-wait
+		nil,          // arguments
 	)
 	handleError(err, "Failed to declare a queue")
 
@@ -91,6 +93,7 @@ func main() {
 	var forever chan struct{}
 
 	go func() {
+		log.Printf("Consumer ready, PID: %d", os.Getpid())
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
 		}
@@ -98,27 +101,6 @@ func main() {
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever
-
-	// hostname, err := os.Hostname()
-	// if err != nil {
-	// 	log.Fatalf("Hostname was not defined %s", err)
-	// }
-
-	// router.GET("/", func(c *gin.Context) {
-	// 	c.String(http.StatusOK, "Welcome!\nI am: %s", hostname)
-	// })
-
-	// router.POST("/post", func(context *gin.Context) {
-	// 	body := Body{}
-	// 	// using BindJson method to serialize body with struct
-	// 	if err := context.BindJSON(&body); err != nil {
-	// 		context.AbortWithError(http.StatusBadRequest, err)
-	// 		return
-	// 	}
-	// 	//fmt.Println(body)
-	// 	log.Println("[/POST] message:", body.Message)
-	// 	context.JSON(http.StatusAccepted, &body)
-	// })
 
 	router.Run(":" + appPort)
 }

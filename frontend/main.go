@@ -61,6 +61,7 @@ func main() {
 	rmqPass := viperEnvVariable("RMQPASS")
 	rmqAddr := viperEnvVariable("RMQADDR")
 	rmqPort := viperEnvVariable("RMQPORT")
+	rmqQueueName := viperEnvVariable("RMQ_QUEUE_NAME")
 
 	rmqConnectionString := fmt.Sprintf("amqp://%s:%s@%s:%s/", rmqUser, rmqPass, rmqAddr, rmqPort)
 	log.Printf("[INFO] Searcing for RMQ server %s...", rmqConnectionString)
@@ -73,12 +74,12 @@ func main() {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
+		rmqQueueName, // name
+		false,        // durable
+		false,        // delete when unused
+		false,        // exclusive
+		false,        // no-wait
+		nil,          // arguments
 	)
 	handleError(err, "Failed to declare a queue")
 
@@ -114,7 +115,7 @@ func main() {
 					Body:        []byte(messageArray[i].text),
 				})
 			handleError(err, "Failed to publish a message")
-			log.Printf(" [x] Sent %s\n", messageArray[i].text)
+			log.Printf("[x] Sent %s\n", messageArray[i].text)
 		}
 
 		// post to MQM

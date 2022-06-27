@@ -9,6 +9,7 @@ services:
       RMQUSER: guest
       RMQPASS: guest
       RMQPORT: 5672
+      RMQ_QUEUE_NAME: hello
     depends_on:
       - rmq
     restart: "on-failure"
@@ -22,6 +23,7 @@ services:
       RMQUSER: guest
       RMQPASS: guest
       RMQPORT: 5672
+      RMQ_QUEUE_NAME: hello
     depends_on:
       - rmq
     restart: "on-failure"
