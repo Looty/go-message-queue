@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend
+  name: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - image: looty10/go-message-queue-backend:v1.1
+        name: go-message-queue-backend
+        ports:
+        - containerPort: 4000
+        env:
+        - name: RMQUSER
+          value: "guest"
+        - name: RMQPASS
+          value: "guest"
+        - name: RMQADDR
+          value: "rabbitmq.default.svc.cluster.local"
+        - name: RMQ_QUEUE_NAME
+          value: "hello"
